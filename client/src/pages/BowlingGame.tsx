@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createNewGame, addRoll, getAvailablePins, getFrameExplanation } from '@/lib/bowling-engine';
+import { createNewGame, addRoll, getAvailablePins, getFrameExplanation, getPotentialFinalScore } from '@/lib/bowling-engine';
 import { GameState } from '@/lib/bowling-types';
 import GameHeader from '@/components/GameHeader';
 import ScoreDisplay from '@/components/ScoreDisplay';
@@ -7,6 +7,7 @@ import Scoreboard from '@/components/Scoreboard';
 import FrameDisplay from '@/components/FrameDisplay';
 import PinSelector from '@/components/PinSelector';
 import ExplanationPanel from '@/components/ExplanationPanel';
+import GameExplanation from '@/components/GameExplanation';
 import { Button } from '@/components/ui/button';
 import { Grid3X3, Focus } from 'lucide-react';
 
@@ -44,6 +45,7 @@ export default function BowlingGame() {
   
   const currentFrameExplanation = getFrameExplanation(gameState, gameState.currentFrame);
   const viewedFrameExplanation = getFrameExplanation(gameState, viewedFrameIndex);
+  const potentialFinalScore = !gameState.gameComplete ? getPotentialFinalScore(gameState) : undefined;
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -56,6 +58,7 @@ export default function BowlingGame() {
               score={gameState.totalScore}
               currentFrame={gameState.currentFrame}
               gameComplete={gameState.gameComplete}
+              potentialScore={potentialFinalScore}
             />
             
             <div className="flex gap-2">
@@ -83,11 +86,12 @@ export default function BowlingGame() {
           </div>
           
           {viewMode === 'full' && (
-            <div className="space-y-4 overflow-x-auto">
-              <div>
+            <div className="space-y-4">
+              <div className="overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">Scoreboard</h2>
                 <Scoreboard gameState={gameState} />
               </div>
+              <GameExplanation gameState={gameState} />
             </div>
           )}
           

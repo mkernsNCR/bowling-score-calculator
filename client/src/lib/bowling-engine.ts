@@ -266,3 +266,38 @@ export function getFrameExplanation(gameState: GameState, frameIndex: number): F
     type: 'incomplete',
   };
 }
+
+export function getPotentialFinalScore(gameState: GameState): number {
+  // Create a copy of the game state and assume all remaining frames are strikes
+  const simulatedState = JSON.parse(JSON.stringify(gameState)) as GameState;
+  
+  // Fill in all remaining incomplete frames with strikes
+  for (let i = simulatedState.currentFrame; i < 10; i++) {
+    const frame = simulatedState.frames[i];
+    
+    // Only simulate if the frame hasn't been completed
+    if (!frame.isComplete) {
+      if (i === 9) {
+        // 10th frame: if it's empty, add 3 strikes; if it has 1 roll, add 2 more
+        if (frame.rolls.length === 0) {
+          frame.rolls = [10, 10, 10];
+        } else if (frame.rolls.length === 1) {
+          frame.rolls.push(10, 10);
+        } else if (frame.rolls.length === 2) {
+          frame.rolls.push(10);
+        }
+        frame.isComplete = true;
+      } else {
+        // Regular frames: just add a strike
+        frame.rolls = [10];
+        frame.isStrike = true;
+        frame.isComplete = true;
+      }
+    }
+  }
+  
+  // Calculate scores for the simulated state
+  calculateScores(simulatedState);
+  
+  return simulatedState.totalScore;
+}
