@@ -63,6 +63,92 @@ export function addRoll(gameState: GameState, pins: number): GameState {
   return newState;
 }
 
+export function addRollToFrame(gameState: GameState, frameIndex: number, pins: number): GameState {
+  const newState = JSON.parse(JSON.stringify(gameState)) as GameState;
+  const frame = newState.frames[frameIndex];
+  const isLastFrame = frameIndex === 9;
+  
+  frame.rolls.push(pins);
+  
+  if (isLastFrame) {
+    if (frame.rolls.length === 3) {
+      frame.isComplete = true;
+      newState.gameComplete = true;
+    } else if (frame.rolls.length === 2) {
+      const [first, second] = frame.rolls;
+      if (first !== 10 && first + second !== 10) {
+        frame.isComplete = true;
+        newState.gameComplete = true;
+      }
+    }
+  } else {
+    if (pins === 10) {
+      frame.isStrike = true;
+      frame.isComplete = true;
+    } else if (frame.rolls.length === 2) {
+      if (frame.rolls[0] + frame.rolls[1] === 10) {
+        frame.isSpare = true;
+      }
+      frame.isComplete = true;
+    }
+  }
+  
+  // Re-evaluate frames from this frame onwards
+  for (let i = frameIndex + 1; i < 10; i++) {
+    const currentFrame = newState.frames[i];
+    const isLastFrame = i === 9;
+    
+    // Reset state if no rolls yet
+    if (currentFrame.rolls.length === 0) {
+      currentFrame.isStrike = false;
+      currentFrame.isSpare = false;
+      currentFrame.isComplete = false;
+      currentFrame.score = null;
+    } else {
+      // Re-evaluate frame completion based on current rolls
+      if (isLastFrame) {
+        if (currentFrame.rolls.length === 3) {
+          currentFrame.isComplete = true;
+        } else if (currentFrame.rolls.length === 2) {
+          const [first, second] = currentFrame.rolls;
+          if (first !== 10 && first + second !== 10) {
+            currentFrame.isComplete = true;
+          }
+        }
+      } else {
+        const firstRoll = currentFrame.rolls[0];
+        if (firstRoll === 10) {
+          currentFrame.isStrike = true;
+          currentFrame.isComplete = true;
+        } else if (currentFrame.rolls.length === 2) {
+          if (currentFrame.rolls[0] + currentFrame.rolls[1] === 10) {
+            currentFrame.isSpare = true;
+          }
+          currentFrame.isComplete = true;
+        }
+      }
+    }
+  }
+  
+  // Find the first incomplete frame and set it as current
+  let firstIncompleteFrame = frameIndex;
+  for (let i = frameIndex; i < 10; i++) {
+    if (!newState.frames[i].isComplete) {
+      firstIncompleteFrame = i;
+      break;
+    }
+    firstIncompleteFrame = i + 1;
+  }
+  
+  newState.currentFrame = Math.min(firstIncompleteFrame, 9);
+  newState.currentRoll = newState.frames[newState.currentFrame].rolls.length;
+  newState.gameComplete = newState.frames[9].isComplete;
+  
+  calculateScores(newState);
+  
+  return newState;
+}
+
 function calculateScores(gameState: GameState): void {
   let runningTotal = 0;
   

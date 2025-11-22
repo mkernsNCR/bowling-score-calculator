@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createNewGame, addRoll, getAvailablePins, getFrameExplanation, getPotentialFinalScore, removeRollFromFrame, clearFrame } from '@/lib/bowling-engine';
+import { createNewGame, addRoll, addRollToFrame, getAvailablePins, getFrameExplanation, getPotentialFinalScore, removeRollFromFrame, clearFrame } from '@/lib/bowling-engine';
 import { GameState } from '@/lib/bowling-types';
 import GameHeader from '@/components/GameHeader';
 import ScoreDisplay from '@/components/ScoreDisplay';
@@ -203,7 +203,7 @@ export default function BowlingGame() {
                       onSelect={(pins) => {
                         // If a different frame is selected, add roll to that frame
                         if (viewMode === 'full' && selectedFrameIndex !== null && displayFrameIndex === selectedFrameIndex) {
-                          const newState = addRoll(gameState, pins);
+                          const newState = addRollToFrame(gameState, selectedFrameIndex, pins);
                           setGameState(newState);
                           // Close edit panel if frame becomes complete
                           if (newState.frames[selectedFrameIndex].isComplete) {
