@@ -348,12 +348,22 @@ export function removeRollFromFrame(gameState: GameState, frameIndex: number, ro
     frame.isComplete = false;
     frame.score = null;
     
-    // If we removed a roll from a completed frame, go back to that frame
-    if (frameIndex < newState.currentFrame || (frameIndex === newState.currentFrame && !frame.isComplete)) {
+    // If we edited a frame before the current frame, clear all subsequent frames
+    if (frameIndex < newState.currentFrame) {
+      for (let i = frameIndex + 1; i < 10; i++) {
+        newState.frames[i].rolls = [];
+        newState.frames[i].isStrike = false;
+        newState.frames[i].isSpare = false;
+        newState.frames[i].isComplete = false;
+        newState.frames[i].score = null;
+      }
       newState.currentFrame = frameIndex;
       newState.currentRoll = frame.rolls.length;
-      newState.gameComplete = false;
+    } else {
+      newState.currentRoll = frame.rolls.length;
     }
+    
+    newState.gameComplete = false;
   }
   
   calculateScores(newState);
@@ -369,6 +379,17 @@ export function clearFrame(gameState: GameState, frameIndex: number): GameState 
   frame.isSpare = false;
   frame.isComplete = false;
   frame.score = null;
+  
+  // If we cleared a frame before the current frame, clear all subsequent frames
+  if (frameIndex < newState.currentFrame) {
+    for (let i = frameIndex + 1; i < 10; i++) {
+      newState.frames[i].rolls = [];
+      newState.frames[i].isStrike = false;
+      newState.frames[i].isSpare = false;
+      newState.frames[i].isComplete = false;
+      newState.frames[i].score = null;
+    }
+  }
   
   // Move back to the cleared frame
   newState.currentFrame = frameIndex;
