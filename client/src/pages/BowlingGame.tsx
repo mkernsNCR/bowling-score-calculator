@@ -124,7 +124,7 @@ export default function BowlingGame() {
             <div className="space-y-4">
               <div className="overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">Scoreboard</h2>
-                <Scoreboard gameState={gameState} onFrameClick={handleFrameClick} />
+                <Scoreboard gameState={gameState} onFrameClick={handleFrameClick} selectedFrameIndex={selectedFrameIndex} />
               </div>
 
               {selectedFrameIndex !== null && (

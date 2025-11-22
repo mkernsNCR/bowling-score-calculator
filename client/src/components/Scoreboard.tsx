@@ -4,9 +4,10 @@ import FrameCell from './FrameCell';
 interface ScoreboardProps {
   gameState: GameState;
   onFrameClick?: (frameIndex: number) => void;
+  selectedFrameIndex?: number | null;
 }
 
-export default function Scoreboard({ gameState, onFrameClick }: ScoreboardProps) {
+export default function Scoreboard({ gameState, onFrameClick, selectedFrameIndex }: ScoreboardProps) {
   // Calculate running totals for each frame
   const calculateRunningTotals = () => {
     const runningTotals: (number | null)[] = [];
@@ -35,7 +36,7 @@ export default function Scoreboard({ gameState, onFrameClick }: ScoreboardProps)
             key={index}
             frame={frame}
             frameNumber={index + 1}
-            isActive={gameState.currentFrame === index}
+            isActive={selectedFrameIndex === index}
             runningTotal={runningTotals[index]}
             onClick={() => onFrameClick?.(index)}
           />
@@ -46,7 +47,7 @@ export default function Scoreboard({ gameState, onFrameClick }: ScoreboardProps)
         <FrameCell
           frame={gameState.frames[9]}
           frameNumber={10}
-          isActive={gameState.currentFrame === 9}
+          isActive={selectedFrameIndex === 9}
           runningTotal={runningTotals[9]}
           onClick={() => onFrameClick?.(9)}
         />

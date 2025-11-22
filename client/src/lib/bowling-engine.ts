@@ -132,17 +132,6 @@ export function addRollToFrame(gameState: GameState, frameIndex: number, pins: n
     }
   }
   
-  // Find the FIRST incomplete frame in the entire game
-  let firstIncompleteFrame = 9; // Default to frame 9 (last frame) if all complete
-  for (let i = 0; i < 10; i++) {
-    if (!newState.frames[i].isComplete) {
-      firstIncompleteFrame = i;
-      break;
-    }
-  }
-  
-  newState.currentFrame = firstIncompleteFrame;
-  newState.currentRoll = newState.frames[newState.currentFrame].rolls.length;
   newState.gameComplete = newState.frames[9].isComplete;
   
   calculateScores(newState);
