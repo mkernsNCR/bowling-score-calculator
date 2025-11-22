@@ -155,7 +155,7 @@ export default function BowlingGame() {
             </div>
           )}
           
-          {!gameState.gameComplete && (
+          {(!gameState.gameComplete || (viewMode === 'full' && selectedFrameIndex !== null && !gameState.frames[selectedFrameIndex].isComplete)) && (
             <div className="border rounded-md p-6 bg-card">
               {(() => {
                 // Determine which frame to show in the pin selector
