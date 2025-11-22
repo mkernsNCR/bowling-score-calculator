@@ -1,0 +1,105 @@
+Prompt: Bowling Game Tracker With Real-Time Scoring Explanation
+
+You are an expert product designer, full-stack engineer, and bowling scoring specialist. Your task is to help me design and build an application called Bowling Score Tutor, a bowling game tracker that also teaches players how scoring works in real time.
+
+Goal of the App
+
+Create a mobile or web application where a user enters each roll of a bowling game and the app:
+	1.	Tracks the score frame by frame.
+	2.	Explains why the score is what it is (explain strikes, spares, bonuses, open frames, 10th frame rules).
+	3.	Shows the running total after each roll.
+	4.	Teaches bowling scoring concepts interactively.
+
+What You Must Produce
+
+Provide all of the following:
+
+1. High-Level Product Overview
+
+A clear description of:
+	•	Purpose of the app
+	•	Target users (beginners, kids, casual bowlers, coaches)
+	•	How the app works at a high level
+	•	What makes it unique
+
+2. Feature List
+
+List and describe all recommended features, such as:
+	•	Roll input (tap pins, keypad, or swipe controls)
+	•	Frame-by-frame score visualization
+	•	Real-time scoring explanation text
+	•	Animated scoring breakdown (strike → add next 2 balls, etc.)
+	•	Scoring rules walkthrough mode
+	•	History of past games
+	•	Statistics and analytics (average, spare %, strike %, frame heatmap)
+	•	Coaching tips based on game patterns
+	•	“Explain This Frame” button
+
+3. Complete Scoring Logic Specification
+
+Define:
+	•	How scores are calculated
+	•	Data structures needed for rolls and frames
+	•	Special cases (strike chains, 10th frame, fouls, gutters, splits)
+	•	How to compute bonuses
+	•	Pseudocode for calculating entire game score
+
+4. UI/UX Wireframe Description
+
+Explain the layout for:
+	•	Home screen
+	•	Active game screen
+	•	Roll input pad
+	•	Scoreboard display
+	•	Real-time explanation pop-ups
+	•	Past game history screen
+	•	Stats dashboard
+
+5. Database Schema
+
+Provide a schema (SQL or NoSQL) for:
+	•	Users
+	•	Games
+	•	Frames
+	•	Rolls
+	•	Notes/explanations
+	•	User stats
+
+6. Technical Implementation Plan
+
+Include:
+	•	Recommended technologies (React Native, Swift, Flutter, Next.js, Firebase, SQLite, etc.)
+	•	API design
+	•	State management model
+	•	Scoring engine module structure
+
+7. Coaching & Education Layer
+
+Specify how the app will teach:
+	•	Brief auto-generated explanations for beginners
+	•	Detailed mode for learning full rules
+	•	Example explanations for every frame scenario
+	•	Suggestion system for improving consistency
+
+8. Example Inputs and Outputs
+
+Give examples of:
+	•	What the user enters
+	•	The resulting score
+	•	The explanation generated
+
+9. Stretch Goals
+
+Optional advanced ideas:
+	•	AR pin visualization
+	•	Video analysis for form improvements
+	•	Multiplayer coaching sessions
+	•	League-mode tracking
+	•	Siri/voice input
+	•	“What If” simulator for future frames
+
+⸻
+
+Instructions to the LLM
+
+Follow the structure above exactly. Be detailed, accurate, and thorough. Assume I will use your output for an investor pitch, product plan, and development blueprint. Do not skip any section.
