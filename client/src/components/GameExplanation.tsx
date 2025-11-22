@@ -1,16 +1,20 @@
+import { useState } from 'react';
 import { GameState } from '@/lib/bowling-types';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface GameExplanationProps {
   gameState: GameState;
 }
 
 export default function GameExplanation({ gameState }: GameExplanationProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  
   let runningTotal = 0;
   const frameBreakdowns: Array<{ frameNum: number; frameScore: number | null; runningTotal: number }> = [];
 
@@ -30,21 +34,33 @@ export default function GameExplanation({ gameState }: GameExplanationProps) {
   const completedFrameCount = frameBreakdowns.length;
   
   return (
-    <Collapsible defaultOpen={false}>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <CollapsibleTrigger asChild>
-        <button
-          className="w-full flex items-center justify-between p-4 border rounded-md bg-card hover-elevate text-left"
-          data-testid="button-game-explanation"
-        >
-          <div>
+        <div className="flex items-center justify-between p-4 border rounded-md bg-card hover-elevate text-left cursor-pointer">
+          <div className="flex-1">
             <h3 className="font-semibold">Game Breakdown</h3>
             <p className="text-sm text-muted-foreground mt-1">
               See how frames add up to your score
             </p>
           </div>
-          <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
-        </button>
+          <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform duration-200 ml-4" style={{
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+          }} />
+        </div>
       </CollapsibleTrigger>
+      
+      {isOpen && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsOpen(false)}
+          className="mt-2 mb-2"
+          data-testid="button-collapse-all"
+        >
+          <ChevronUp className="w-4 h-4 mr-1" />
+          Collapse All
+        </Button>
+      )}
       
       <CollapsibleContent className="mt-2 p-4 border rounded-md bg-card">
         <div className="space-y-4">
