@@ -5,6 +5,7 @@ import GameHeader from '@/components/GameHeader';
 import ScoreDisplay from '@/components/ScoreDisplay';
 import Scoreboard from '@/components/Scoreboard';
 import FrameDisplay from '@/components/FrameDisplay';
+import FrameEditPanel from '@/components/FrameEditPanel';
 import PinSelector from '@/components/PinSelector';
 import ExplanationPanel from '@/components/ExplanationPanel';
 import GameExplanation from '@/components/GameExplanation';
@@ -17,6 +18,7 @@ export default function BowlingGame() {
   const [gameState, setGameState] = useState<GameState>(createNewGame());
   const [viewMode, setViewMode] = useState<ViewMode>('full');
   const [viewedFrameIndex, setViewedFrameIndex] = useState<number>(0);
+  const [selectedFrameIndex, setSelectedFrameIndex] = useState<number | null>(null);
   
   const handlePinSelect = (pins: number) => {
     const newState = addRoll(gameState, pins);
@@ -36,16 +38,26 @@ export default function BowlingGame() {
     setViewedFrameIndex(Math.min(9, viewedFrameIndex + 1));
   };
 
-  const handleRemoveRoll = (rollIndex: number) => {
-    const newState = removeRollFromFrame(gameState, viewedFrameIndex, rollIndex);
+  const handleRemoveRoll = (rollIndex: number, frameIndex?: number) => {
+    const targetFrame = frameIndex !== undefined ? frameIndex : viewedFrameIndex;
+    const newState = removeRollFromFrame(gameState, targetFrame, rollIndex);
     setGameState(newState);
     setViewedFrameIndex(newState.currentFrame);
   };
 
-  const handleClearFrame = () => {
-    const newState = clearFrame(gameState, viewedFrameIndex);
+  const handleClearFrame = (frameIndex?: number) => {
+    const targetFrame = frameIndex !== undefined ? frameIndex : viewedFrameIndex;
+    const newState = clearFrame(gameState, targetFrame);
     setGameState(newState);
     setViewedFrameIndex(newState.currentFrame);
+  };
+
+  const handleFrameClick = (frameIndex: number) => {
+    if (selectedFrameIndex === frameIndex) {
+      setSelectedFrameIndex(null);
+    } else {
+      setSelectedFrameIndex(frameIndex);
+    }
   };
   
   const availablePins = getAvailablePins(gameState);
@@ -101,8 +113,18 @@ export default function BowlingGame() {
             <div className="space-y-4">
               <div className="overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">Scoreboard</h2>
-                <Scoreboard gameState={gameState} />
+                <Scoreboard gameState={gameState} onFrameClick={handleFrameClick} />
               </div>
+
+              {selectedFrameIndex !== null && (
+                <FrameEditPanel
+                  frame={gameState.frames[selectedFrameIndex]}
+                  frameNumber={selectedFrameIndex + 1}
+                  onRemoveRoll={(rollIndex) => handleRemoveRoll(rollIndex, selectedFrameIndex)}
+                  onClearFrame={() => handleClearFrame(selectedFrameIndex)}
+                />
+              )}
+
               <GameExplanation gameState={gameState} />
             </div>
           )}
