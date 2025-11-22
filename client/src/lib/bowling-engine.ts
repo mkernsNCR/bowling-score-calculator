@@ -301,3 +301,80 @@ export function getPotentialFinalScore(gameState: GameState): number {
   
   return simulatedState.totalScore;
 }
+
+export function undoLastRoll(gameState: GameState): GameState {
+  const newState = JSON.parse(JSON.stringify(gameState)) as GameState;
+  
+  // Find the last frame with rolls and remove the last roll
+  for (let i = newState.currentFrame; i >= 0; i--) {
+    const frame = newState.frames[i];
+    if (frame.rolls.length > 0) {
+      frame.rolls.pop();
+      
+      // Reset frame state when removing a roll
+      frame.isStrike = false;
+      frame.isSpare = false;
+      frame.isComplete = false;
+      frame.score = null;
+      
+      // If this wasn't the current frame, we need to go back to it
+      if (i < newState.currentFrame) {
+        newState.currentFrame = i;
+        newState.currentRoll = frame.rolls.length;
+        newState.gameComplete = false;
+      } else if (i === newState.currentFrame) {
+        newState.currentRoll = frame.rolls.length;
+        newState.gameComplete = false;
+      }
+      
+      break;
+    }
+  }
+  
+  calculateScores(newState);
+  return newState;
+}
+
+export function removeRollFromFrame(gameState: GameState, frameIndex: number, rollIndex: number): GameState {
+  const newState = JSON.parse(JSON.stringify(gameState)) as GameState;
+  const frame = newState.frames[frameIndex];
+  
+  if (rollIndex >= 0 && rollIndex < frame.rolls.length) {
+    frame.rolls.splice(rollIndex, 1);
+    
+    // Reset frame state
+    frame.isStrike = false;
+    frame.isSpare = false;
+    frame.isComplete = false;
+    frame.score = null;
+    
+    // If we removed a roll from a completed frame, go back to that frame
+    if (frameIndex < newState.currentFrame || (frameIndex === newState.currentFrame && !frame.isComplete)) {
+      newState.currentFrame = frameIndex;
+      newState.currentRoll = frame.rolls.length;
+      newState.gameComplete = false;
+    }
+  }
+  
+  calculateScores(newState);
+  return newState;
+}
+
+export function clearFrame(gameState: GameState, frameIndex: number): GameState {
+  const newState = JSON.parse(JSON.stringify(gameState)) as GameState;
+  const frame = newState.frames[frameIndex];
+  
+  frame.rolls = [];
+  frame.isStrike = false;
+  frame.isSpare = false;
+  frame.isComplete = false;
+  frame.score = null;
+  
+  // Move back to the cleared frame
+  newState.currentFrame = frameIndex;
+  newState.currentRoll = 0;
+  newState.gameComplete = false;
+  
+  calculateScores(newState);
+  return newState;
+}

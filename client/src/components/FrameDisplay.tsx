@@ -1,7 +1,7 @@
 import { Frame } from '@/lib/bowling-types';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Trash2 } from 'lucide-react';
 
 interface FrameDisplayProps {
   frame: Frame;
@@ -10,6 +10,8 @@ interface FrameDisplayProps {
   onNextFrame?: () => void;
   canGoPrev?: boolean;
   canGoNext?: boolean;
+  onRemoveRoll?: (rollIndex: number) => void;
+  onClearFrame?: () => void;
 }
 
 export default function FrameDisplay({ 
@@ -18,7 +20,9 @@ export default function FrameDisplay({
   onPrevFrame, 
   onNextFrame,
   canGoPrev,
-  canGoNext
+  canGoNext,
+  onRemoveRoll,
+  onClearFrame
 }: FrameDisplayProps) {
   const isLastFrame = frameNumber === 10;
   
@@ -36,12 +40,22 @@ export default function FrameDisplay({
       return (
         <div className="flex gap-4 justify-center">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="w-20 h-20 flex items-center justify-center font-mono text-5xl font-bold border rounded-md">
-              {frame.rolls[i] !== undefined ? (
-                frame.rolls[i] === 10 ? 'X' :
-                i > 0 && frame.rolls[i - 1] !== 10 && frame.rolls[i - 1] + frame.rolls[i] === 10 ? '/' :
-                frame.rolls[i]
-              ) : '-'}
+            <div key={i} className="relative group">
+              <div className="w-20 h-20 flex items-center justify-center font-mono text-5xl font-bold border rounded-md bg-card hover-elevate cursor-pointer transition-colors"
+                onClick={() => onRemoveRoll?.(i)}
+                data-testid={`button-remove-roll-${i}`}
+              >
+                {frame.rolls[i] !== undefined ? (
+                  frame.rolls[i] === 10 ? 'X' :
+                  i > 0 && frame.rolls[i - 1] !== 10 && frame.rolls[i - 1] + frame.rolls[i] === 10 ? '/' :
+                  frame.rolls[i]
+                ) : '-'}
+              </div>
+              {frame.rolls[i] !== undefined && (
+                <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <X className="w-3 h-3 text-destructive" />
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -53,13 +67,31 @@ export default function FrameDisplay({
     
     return (
       <div className="flex gap-4 justify-center">
-        <div className="w-20 h-20 flex items-center justify-center font-mono text-5xl font-bold border rounded-md">
-          {firstRoll === 10 ? 'X' : firstRoll}
+        <div className="relative group">
+          <div className="w-20 h-20 flex items-center justify-center font-mono text-5xl font-bold border rounded-md bg-card hover-elevate cursor-pointer"
+            onClick={() => onRemoveRoll?.(0)}
+            data-testid="button-remove-roll-0"
+          >
+            {firstRoll === 10 ? 'X' : firstRoll}
+          </div>
+          <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <X className="w-3 h-3 text-destructive" />
+          </div>
         </div>
-        <div className="w-20 h-20 flex items-center justify-center font-mono text-5xl font-bold border rounded-md">
-          {secondRoll !== undefined ? (
-            firstRoll + secondRoll === 10 ? '/' : secondRoll
-          ) : '-'}
+        <div className="relative group">
+          <div className="w-20 h-20 flex items-center justify-center font-mono text-5xl font-bold border rounded-md bg-card hover-elevate cursor-pointer"
+            onClick={() => onRemoveRoll?.(1)}
+            data-testid="button-remove-roll-1"
+          >
+            {secondRoll !== undefined ? (
+              firstRoll + secondRoll === 10 ? '/' : secondRoll
+            ) : '-'}
+          </div>
+          {secondRoll !== undefined && (
+            <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <X className="w-3 h-3 text-destructive" />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -101,11 +133,27 @@ export default function FrameDisplay({
       </div>
       
       <div className="border-t pt-6">
-        <div className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-2">
-          Frame Score
-        </div>
-        <div className="font-mono text-5xl font-bold">
-          {frame.score !== null ? frame.score : '-'}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <div className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-2">
+              Frame Score
+            </div>
+            <div className="font-mono text-5xl font-bold">
+              {frame.score !== null ? frame.score : '-'}
+            </div>
+          </div>
+          
+          {frame.rolls.length > 0 && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onClearFrame}
+              data-testid="button-clear-frame"
+              className="text-destructive hover:text-destructive"
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>

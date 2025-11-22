@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createNewGame, addRoll, getAvailablePins, getFrameExplanation, getPotentialFinalScore } from '@/lib/bowling-engine';
+import { createNewGame, addRoll, getAvailablePins, getFrameExplanation, getPotentialFinalScore, removeRollFromFrame, clearFrame } from '@/lib/bowling-engine';
 import { GameState } from '@/lib/bowling-types';
 import GameHeader from '@/components/GameHeader';
 import ScoreDisplay from '@/components/ScoreDisplay';
@@ -34,6 +34,17 @@ export default function BowlingGame() {
   
   const handleNextFrame = () => {
     setViewedFrameIndex(Math.min(9, viewedFrameIndex + 1));
+  };
+
+  const handleRemoveRoll = (rollIndex: number) => {
+    const newState = removeRollFromFrame(gameState, viewedFrameIndex, rollIndex);
+    setGameState(newState);
+  };
+
+  const handleClearFrame = () => {
+    const newState = clearFrame(gameState, viewedFrameIndex);
+    setGameState(newState);
+    setViewedFrameIndex(newState.currentFrame);
   };
   
   const availablePins = getAvailablePins(gameState);
@@ -104,6 +115,8 @@ export default function BowlingGame() {
                 onNextFrame={handleNextFrame}
                 canGoPrev={viewedFrameIndex > 0}
                 canGoNext={viewedFrameIndex < 9}
+                onRemoveRoll={handleRemoveRoll}
+                onClearFrame={handleClearFrame}
               />
             </div>
           )}
