@@ -43,6 +43,10 @@ export default function BowlingGame() {
     const newState = removeRollFromFrame(gameState, targetFrame, rollIndex);
     setGameState(newState);
     setViewedFrameIndex(newState.currentFrame);
+    // Close edit panel if editing from scoreboard
+    if (frameIndex !== undefined) {
+      setSelectedFrameIndex(null);
+    }
   };
 
   const handleClearFrame = (frameIndex?: number) => {
@@ -50,6 +54,10 @@ export default function BowlingGame() {
     const newState = clearFrame(gameState, targetFrame);
     setGameState(newState);
     setViewedFrameIndex(newState.currentFrame);
+    // Close edit panel if editing from scoreboard
+    if (frameIndex !== undefined) {
+      setSelectedFrameIndex(null);
+    }
   };
 
   const handleFrameClick = (frameIndex: number) => {
