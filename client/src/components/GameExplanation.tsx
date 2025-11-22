@@ -14,8 +14,8 @@ export default function GameExplanation({ gameState }: GameExplanationProps) {
   let runningTotal = 0;
   const frameBreakdowns: Array<{ frameNum: number; frameScore: number | null; runningTotal: number }> = [];
 
-  // Calculate running totals
-  for (let i = 0; i < gameState.currentFrame; i++) {
+  // Calculate running totals for all frames with scores
+  for (let i = 0; i < 10; i++) {
     const frame = gameState.frames[i];
     if (frame.score !== null) {
       runningTotal += frame.score;
