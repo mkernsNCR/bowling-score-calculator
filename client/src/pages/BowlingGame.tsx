@@ -10,7 +10,7 @@ import PinSelector from '@/components/PinSelector';
 import ExplanationPanel from '@/components/ExplanationPanel';
 import GameExplanation from '@/components/GameExplanation';
 import { Button } from '@/components/ui/button';
-import { Grid3X3, Focus } from 'lucide-react';
+import { Grid3X3, Focus, ChevronUp } from 'lucide-react';
 
 type ViewMode = 'full' | 'frame';
 
@@ -19,6 +19,7 @@ export default function BowlingGame() {
   const [viewMode, setViewMode] = useState<ViewMode>('full');
   const [viewedFrameIndex, setViewedFrameIndex] = useState<number>(0);
   const [selectedFrameIndex, setSelectedFrameIndex] = useState<number | null>(null);
+  const [openExplanations, setOpenExplanations] = useState<Set<number>>(new Set());
   
   const handlePinSelect = (pins: number) => {
     const newState = addRoll(gameState, pins);
@@ -222,9 +223,22 @@ export default function BowlingGame() {
           
           {(viewMode === 'frame' || completedFrames.length > 0) && (
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold">
-                {viewMode === 'frame' ? 'Current Frame Explanation' : 'Frame Explanations'}
-              </h2>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">
+                  {viewMode === 'frame' ? 'Current Frame Explanation' : 'Frame Explanations'}
+                </h2>
+                {viewMode === 'full' && completedFrames.length > 0 && openExplanations.size > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setOpenExplanations(new Set())}
+                    data-testid="button-collapse-all-explanations"
+                  >
+                    <ChevronUp className="w-4 h-4 mr-1" />
+                    Collapse All
+                  </Button>
+                )}
+              </div>
               <div className="space-y-3">
                 {viewMode === 'frame' ? (
                   viewedFrameExplanation && (
@@ -242,6 +256,16 @@ export default function BowlingGame() {
                       <ExplanationPanel
                         key={index}
                         explanation={explanation}
+                        isOpen={openExplanations.has(index)}
+                        onOpenChange={(open) => {
+                          const newOpenExplanations = new Set(openExplanations);
+                          if (open) {
+                            newOpenExplanations.add(index);
+                          } else {
+                            newOpenExplanations.delete(index);
+                          }
+                          setOpenExplanations(newOpenExplanations);
+                        }}
                         defaultOpen={index === gameState.currentFrame - 1 || (index === 9 && gameState.gameComplete)}
                       />
                     );

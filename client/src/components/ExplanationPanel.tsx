@@ -11,9 +11,11 @@ import { cn } from '@/lib/utils';
 interface ExplanationPanelProps {
   explanation: FrameExplanation;
   defaultOpen?: boolean;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export default function ExplanationPanel({ explanation, defaultOpen }: ExplanationPanelProps) {
+export default function ExplanationPanel({ explanation, defaultOpen, isOpen, onOpenChange }: ExplanationPanelProps) {
   const getIcon = () => {
     switch (explanation.type) {
       case 'strike':
@@ -38,11 +40,15 @@ export default function ExplanationPanel({ explanation, defaultOpen }: Explanati
     }
   };
   
+  const accordionValue = isOpen !== undefined ? (isOpen ? 'item-1' : '') : (defaultOpen ? 'item-1' : undefined);
+  
   return (
     <Accordion 
       type="single" 
       collapsible 
-      defaultValue={defaultOpen ? 'item-1' : undefined}
+      value={isOpen !== undefined ? accordionValue : undefined}
+      onValueChange={onOpenChange ? (value) => onOpenChange(value === 'item-1') : undefined}
+      defaultValue={isOpen === undefined ? accordionValue : undefined}
       data-testid={`explanation-frame-${explanation.frameNumber}`}
     >
       <AccordionItem value="item-1" className="border rounded-md px-4">
