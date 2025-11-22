@@ -15,6 +15,7 @@ type ViewMode = 'full' | 'frame';
 export default function BowlingGame() {
   const [gameState, setGameState] = useState<GameState>(createNewGame());
   const [viewMode, setViewMode] = useState<ViewMode>('full');
+  const [viewedFrameIndex, setViewedFrameIndex] = useState<number>(0);
   
   const handlePinSelect = (pins: number) => {
     const newState = addRoll(gameState, pins);
@@ -23,6 +24,15 @@ export default function BowlingGame() {
   
   const handleNewGame = () => {
     setGameState(createNewGame());
+    setViewedFrameIndex(0);
+  };
+  
+  const handlePrevFrame = () => {
+    setViewedFrameIndex(Math.max(0, viewedFrameIndex - 1));
+  };
+  
+  const handleNextFrame = () => {
+    setViewedFrameIndex(Math.min(9, viewedFrameIndex + 1));
   };
   
   const availablePins = getAvailablePins(gameState);
@@ -33,6 +43,7 @@ export default function BowlingGame() {
     .reverse();
   
   const currentFrameExplanation = getFrameExplanation(gameState, gameState.currentFrame);
+  const viewedFrameExplanation = getFrameExplanation(gameState, viewedFrameIndex);
   
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -83,8 +94,12 @@ export default function BowlingGame() {
           {viewMode === 'frame' && (
             <div>
               <FrameDisplay 
-                frame={gameState.frames[gameState.currentFrame]}
-                frameNumber={gameState.currentFrame + 1}
+                frame={gameState.frames[viewedFrameIndex]}
+                frameNumber={viewedFrameIndex + 1}
+                onPrevFrame={handlePrevFrame}
+                onNextFrame={handleNextFrame}
+                canGoPrev={viewedFrameIndex > 0}
+                canGoNext={viewedFrameIndex < 9}
               />
             </div>
           )}
@@ -108,9 +123,9 @@ export default function BowlingGame() {
               </h2>
               <div className="space-y-3">
                 {viewMode === 'frame' ? (
-                  currentFrameExplanation && (
+                  viewedFrameExplanation && (
                     <ExplanationPanel
-                      explanation={currentFrameExplanation}
+                      explanation={viewedFrameExplanation}
                       defaultOpen={true}
                     />
                   )

@@ -1,12 +1,25 @@
 import { Frame } from '@/lib/bowling-types';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface FrameDisplayProps {
   frame: Frame;
   frameNumber: number;
+  onPrevFrame?: () => void;
+  onNextFrame?: () => void;
+  canGoPrev?: boolean;
+  canGoNext?: boolean;
 }
 
-export default function FrameDisplay({ frame, frameNumber }: FrameDisplayProps) {
+export default function FrameDisplay({ 
+  frame, 
+  frameNumber, 
+  onPrevFrame, 
+  onNextFrame,
+  canGoPrev,
+  canGoNext
+}: FrameDisplayProps) {
   const isLastFrame = frameNumber === 10;
   
   const renderRolls = () => {
@@ -53,12 +66,34 @@ export default function FrameDisplay({ frame, frameNumber }: FrameDisplayProps) 
   };
   
   return (
-    <div className="border rounded-md p-8 bg-card text-center">
-      <div className="mb-8">
-        <h2 className="text-lg font-medium uppercase tracking-wide text-muted-foreground mb-2">
-          Frame {frameNumber}
-        </h2>
-        <p className="text-sm text-muted-foreground">Roll {frame.rolls.length + 1}</p>
+    <div className="border rounded-md p-8 bg-card">
+      <div className="flex items-center justify-between mb-8">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onPrevFrame}
+          disabled={!canGoPrev}
+          data-testid="button-frame-prev"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        
+        <div className="text-center">
+          <h2 className="text-lg font-medium uppercase tracking-wide text-muted-foreground mb-2">
+            Frame {frameNumber}
+          </h2>
+          <p className="text-sm text-muted-foreground">Roll {frame.rolls.length + 1}</p>
+        </div>
+        
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onNextFrame}
+          disabled={!canGoNext}
+          data-testid="button-frame-next"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
       </div>
       
       <div className="mb-8">
