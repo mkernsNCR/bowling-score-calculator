@@ -35,11 +35,11 @@ export default function FrameCellExample() {
   
   return (
     <div className="p-8 space-y-4 bg-background">
-      <div className="grid grid-cols-4 gap-4">
-        <FrameCell frame={strikeFrame} frameNumber={1} isActive={false} />
-        <FrameCell frame={spareFrame} frameNumber={2} isActive={false} />
-        <FrameCell frame={openFrame} frameNumber={3} isActive={true} />
-        <FrameCell frame={tenthFrame} frameNumber={10} isActive={false} />
+      <div className="flex gap-1">
+        <FrameCell frame={strikeFrame} frameNumber={1} isActive={false} runningTotal={20} />
+        <FrameCell frame={spareFrame} frameNumber={2} isActive={false} runningTotal={35} />
+        <FrameCell frame={openFrame} frameNumber={3} isActive={true} runningTotal={43} />
+        <FrameCell frame={tenthFrame} frameNumber={10} isActive={false} runningTotal={72} />
       </div>
     </div>
   );
