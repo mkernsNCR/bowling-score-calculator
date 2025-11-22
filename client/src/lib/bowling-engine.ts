@@ -98,11 +98,13 @@ export function addRollToFrame(gameState: GameState, frameIndex: number, pins: n
     const currentFrame = newState.frames[i];
     const isLastFrame = i === 9;
     
+    // Always reset first, then re-evaluate based on rolls
+    currentFrame.isStrike = false;
+    currentFrame.isSpare = false;
+    currentFrame.isComplete = false;
+    
     // Reset state if no rolls yet
     if (currentFrame.rolls.length === 0) {
-      currentFrame.isStrike = false;
-      currentFrame.isSpare = false;
-      currentFrame.isComplete = false;
       currentFrame.score = null;
     } else {
       // Re-evaluate frame completion based on current rolls
@@ -130,8 +132,8 @@ export function addRollToFrame(gameState: GameState, frameIndex: number, pins: n
     }
   }
   
-  // Find the first incomplete frame and set it as current (start from next frame)
-  let firstIncompleteFrame = 9; // Default to last frame if all complete
+  // Find the first incomplete frame starting from the next frame
+  let firstIncompleteFrame = 9; // Default to frame 9 (last frame) if all complete
   for (let i = frameIndex + 1; i < 10; i++) {
     if (!newState.frames[i].isComplete) {
       firstIncompleteFrame = i;
