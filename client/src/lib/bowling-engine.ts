@@ -342,28 +342,58 @@ export function removeRollFromFrame(gameState: GameState, frameIndex: number, ro
   if (rollIndex >= 0 && rollIndex < frame.rolls.length) {
     frame.rolls.splice(rollIndex, 1);
     
-    // Reset frame state
-    frame.isStrike = false;
-    frame.isSpare = false;
-    frame.isComplete = false;
-    frame.score = null;
-    
-    // If we edited a frame before the current frame, clear all subsequent frames
-    if (frameIndex < newState.currentFrame) {
-      for (let i = frameIndex + 1; i < 10; i++) {
-        newState.frames[i].rolls = [];
-        newState.frames[i].isStrike = false;
-        newState.frames[i].isSpare = false;
-        newState.frames[i].isComplete = false;
-        newState.frames[i].score = null;
+    // Re-evaluate frames from the edited frame onwards
+    for (let i = frameIndex; i < 10; i++) {
+      const currentFrame = newState.frames[i];
+      const isLastFrame = i === 9;
+      
+      // Reset state
+      currentFrame.isStrike = false;
+      currentFrame.isSpare = false;
+      currentFrame.isComplete = false;
+      currentFrame.score = null;
+      
+      // Re-evaluate frame completion based on current rolls
+      if (currentFrame.rolls.length === 0) {
+        // No rolls yet
+      } else if (isLastFrame) {
+        // 10th frame rules
+        if (currentFrame.rolls.length === 3) {
+          currentFrame.isComplete = true;
+        } else if (currentFrame.rolls.length === 2) {
+          const [first, second] = currentFrame.rolls;
+          if (first !== 10 && first + second !== 10) {
+            currentFrame.isComplete = true;
+          }
+        }
+      } else {
+        // Regular frame rules
+        const firstRoll = currentFrame.rolls[0];
+        if (firstRoll === 10) {
+          currentFrame.isStrike = true;
+          currentFrame.isComplete = true;
+        } else if (currentFrame.rolls.length === 2) {
+          if (currentFrame.rolls[0] + currentFrame.rolls[1] === 10) {
+            currentFrame.isSpare = true;
+          }
+          currentFrame.isComplete = true;
+        }
       }
-      newState.currentFrame = frameIndex;
-      newState.currentRoll = frame.rolls.length;
-    } else {
-      newState.currentRoll = frame.rolls.length;
     }
     
-    newState.gameComplete = false;
+    // Set currentFrame to the first incomplete frame
+    let firstIncompleteFrame = frameIndex;
+    for (let i = frameIndex; i < 10; i++) {
+      if (!newState.frames[i].isComplete) {
+        firstIncompleteFrame = i;
+        break;
+      }
+      firstIncompleteFrame = i + 1; // Move past the last frame
+    }
+    
+    newState.currentFrame = Math.min(firstIncompleteFrame, 9);
+    newState.currentRoll = newState.frames[newState.currentFrame].rolls.length;
+    newState.gameComplete = newState.frames[9].isComplete;
   }
   
   calculateScores(newState);
@@ -380,21 +410,49 @@ export function clearFrame(gameState: GameState, frameIndex: number): GameState 
   frame.isComplete = false;
   frame.score = null;
   
-  // If we cleared a frame before the current frame, clear all subsequent frames
-  if (frameIndex < newState.currentFrame) {
-    for (let i = frameIndex + 1; i < 10; i++) {
-      newState.frames[i].rolls = [];
-      newState.frames[i].isStrike = false;
-      newState.frames[i].isSpare = false;
-      newState.frames[i].isComplete = false;
-      newState.frames[i].score = null;
+  // Re-evaluate frames from the cleared frame onwards
+  for (let i = frameIndex; i < 10; i++) {
+    const currentFrame = newState.frames[i];
+    const isLastFrame = i === 9;
+    
+    // Reset state
+    currentFrame.isStrike = false;
+    currentFrame.isSpare = false;
+    currentFrame.isComplete = false;
+    currentFrame.score = null;
+    
+    // Re-evaluate frame completion based on current rolls
+    if (currentFrame.rolls.length === 0) {
+      // No rolls yet
+    } else if (isLastFrame) {
+      // 10th frame rules
+      if (currentFrame.rolls.length === 3) {
+        currentFrame.isComplete = true;
+      } else if (currentFrame.rolls.length === 2) {
+        const [first, second] = currentFrame.rolls;
+        if (first !== 10 && first + second !== 10) {
+          currentFrame.isComplete = true;
+        }
+      }
+    } else {
+      // Regular frame rules
+      const firstRoll = currentFrame.rolls[0];
+      if (firstRoll === 10) {
+        currentFrame.isStrike = true;
+        currentFrame.isComplete = true;
+      } else if (currentFrame.rolls.length === 2) {
+        if (currentFrame.rolls[0] + currentFrame.rolls[1] === 10) {
+          currentFrame.isSpare = true;
+        }
+        currentFrame.isComplete = true;
+      }
     }
   }
   
-  // Move back to the cleared frame
+  // Set currentFrame to the cleared frame
   newState.currentFrame = frameIndex;
   newState.currentRoll = 0;
-  newState.gameComplete = false;
+  newState.gameComplete = newState.frames[9].isComplete;
   
   calculateScores(newState);
   return newState;
