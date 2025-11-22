@@ -39,6 +39,7 @@ export default function BowlingGame() {
   const handleRemoveRoll = (rollIndex: number) => {
     const newState = removeRollFromFrame(gameState, viewedFrameIndex, rollIndex);
     setGameState(newState);
+    setViewedFrameIndex(newState.currentFrame);
   };
 
   const handleClearFrame = () => {
