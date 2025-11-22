@@ -61,6 +61,9 @@ export default function BowlingGame() {
   };
 
   const handleFrameClick = (frameIndex: number) => {
+    // If clicking on an incomplete frame, allow editing/playing
+    // If clicking on a complete frame, just toggle the edit panel
+    const frame = gameState.frames[frameIndex];
     if (selectedFrameIndex === frameIndex) {
       setSelectedFrameIndex(null);
     } else {
@@ -154,13 +157,66 @@ export default function BowlingGame() {
           
           {!gameState.gameComplete && (
             <div className="border rounded-md p-6 bg-card">
-              <h2 className="text-xl font-semibold mb-4 text-center">
-                Frame {gameState.currentFrame + 1} - Roll {gameState.frames[gameState.currentFrame].rolls.length + 1}
-              </h2>
-              <PinSelector 
-                maxPins={availablePins}
-                onSelect={handlePinSelect}
-              />
+              {(() => {
+                // Determine which frame to show in the pin selector
+                let displayFrameIndex = gameState.currentFrame;
+                
+                // In full view, if a frame is selected and incomplete, show that frame
+                if (viewMode === 'full' && selectedFrameIndex !== null) {
+                  const selectedFrame = gameState.frames[selectedFrameIndex];
+                  if (!selectedFrame.isComplete) {
+                    displayFrameIndex = selectedFrameIndex;
+                  }
+                }
+                
+                const displayFrame = gameState.frames[displayFrameIndex];
+                const isLastFrame = displayFrameIndex === 9;
+                
+                // Calculate available pins for the display frame
+                let displayMaxPins = 10;
+                if (isLastFrame) {
+                  if (displayFrame.rolls.length === 0) {
+                    displayMaxPins = 10;
+                  } else if (displayFrame.rolls.length === 1) {
+                    displayMaxPins = displayFrame.rolls[0] === 10 ? 10 : 10 - displayFrame.rolls[0];
+                  } else if (displayFrame.rolls.length === 2) {
+                    const [first, second] = displayFrame.rolls;
+                    displayMaxPins = (first === 10 || first + second === 10) ? 10 : 0;
+                  }
+                } else {
+                  if (displayFrame.rolls.length === 0) {
+                    displayMaxPins = 10;
+                  } else if (displayFrame.rolls.length === 1) {
+                    displayMaxPins = 10 - displayFrame.rolls[0];
+                  } else {
+                    displayMaxPins = 0;
+                  }
+                }
+                
+                return (
+                  <>
+                    <h2 className="text-xl font-semibold mb-4 text-center">
+                      Frame {displayFrameIndex + 1} - Roll {displayFrame.rolls.length + 1}
+                    </h2>
+                    <PinSelector 
+                      maxPins={displayMaxPins}
+                      onSelect={(pins) => {
+                        // If a different frame is selected, add roll to that frame
+                        if (viewMode === 'full' && selectedFrameIndex !== null && displayFrameIndex === selectedFrameIndex) {
+                          const newState = addRoll(gameState, pins);
+                          setGameState(newState);
+                          // Close edit panel if frame becomes complete
+                          if (newState.frames[selectedFrameIndex].isComplete) {
+                            setSelectedFrameIndex(null);
+                          }
+                        } else {
+                          handlePinSelect(pins);
+                        }
+                      }}
+                    />
+                  </>
+                );
+              })()}
             </div>
           )}
           
