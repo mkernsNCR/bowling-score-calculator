@@ -132,9 +132,9 @@ export function addRollToFrame(gameState: GameState, frameIndex: number, pins: n
     }
   }
   
-  // Find the first incomplete frame starting from the next frame
+  // Find the first incomplete frame in the entire game
   let firstIncompleteFrame = 9; // Default to frame 9 (last frame) if all complete
-  for (let i = frameIndex + 1; i < 10; i++) {
+  for (let i = 0; i < 10; i++) {
     if (!newState.frames[i].isComplete) {
       firstIncompleteFrame = i;
       break;
@@ -468,17 +468,16 @@ export function removeRollFromFrame(gameState: GameState, frameIndex: number, ro
       }
     }
     
-    // Set currentFrame to the first incomplete frame
-    let firstIncompleteFrame = frameIndex;
-    for (let i = frameIndex; i < 10; i++) {
+    // Set currentFrame to the first incomplete frame in the entire game
+    let firstIncompleteFrame = 9;
+    for (let i = 0; i < 10; i++) {
       if (!newState.frames[i].isComplete) {
         firstIncompleteFrame = i;
         break;
       }
-      firstIncompleteFrame = i + 1; // Move past the last frame
     }
     
-    newState.currentFrame = Math.min(firstIncompleteFrame, 9);
+    newState.currentFrame = firstIncompleteFrame;
     newState.currentRoll = newState.frames[newState.currentFrame].rolls.length;
     newState.gameComplete = newState.frames[9].isComplete;
   }
