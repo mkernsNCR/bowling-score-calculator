@@ -31,7 +31,7 @@ export default function Scoreboard({ gameState, onFrameClick, selectedFrameIndex
   return (
     <div className="w-full">
       <div className="flex gap-1 overflow-x-auto pb-2">
-        {gameState.frames.slice(0, 9).map((frame, index) => (
+        {gameState.frames.map((frame, index) => (
           <FrameCell
             key={index}
             frame={frame}
@@ -41,16 +41,6 @@ export default function Scoreboard({ gameState, onFrameClick, selectedFrameIndex
             onClick={() => onFrameClick?.(index)}
           />
         ))}
-      </div>
-      
-      <div className="flex gap-1">
-        <FrameCell
-          frame={gameState.frames[9]}
-          frameNumber={10}
-          isActive={selectedFrameIndex === 9}
-          runningTotal={runningTotals[9]}
-          onClick={() => onFrameClick?.(9)}
-        />
       </div>
     </div>
   );
