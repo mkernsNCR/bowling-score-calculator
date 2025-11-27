@@ -1,5 +1,6 @@
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { RotateCcw } from 'lucide-react';
+import { RotateCcw, Home } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
 interface GameHeaderProps {
@@ -7,15 +8,28 @@ interface GameHeaderProps {
 }
 
 export default function GameHeader({ onNewGame }: GameHeaderProps) {
+  const [, setLocation] = useLocation();
+  
   return (
     <header className="border-b bg-card">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-4">
         <div className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">Bowling Score Calculator</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Learn bowling scoring in real-time
-            </p>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setLocation('/')}
+              data-testid="button-back-home"
+              title="Back to Home"
+            >
+              <Home className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">Bowling Score Calculator</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Learn bowling scoring in real-time
+              </p>
+            </div>
           </div>
           
           <div className="flex items-center gap-2">

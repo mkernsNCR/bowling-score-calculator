@@ -1,4 +1,4 @@
-import { Link } from 'wouter';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
@@ -6,6 +6,13 @@ import { Calculator, BookOpen, Edit3, Zap, Target, Trophy } from 'lucide-react';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Home() {
+  const [, setLocation] = useLocation();
+  
+  const navigateToPlay = () => {
+    setLocation('/play');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+  
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -57,12 +64,10 @@ export default function Home() {
                 Interactive scoring that teaches as you play.
               </p>
 
-              <Link href="/play">
-                <Button size="lg" className="text-lg px-8 py-6" data-testid="button-start-bowling">
-                  <Zap className="w-5 h-5 mr-2" />
-                  Start Bowling
-                </Button>
-              </Link>
+              <Button size="lg" onClick={navigateToPlay} data-testid="button-start-bowling">
+                <Zap className="w-5 h-5 mr-2" />
+                Start Bowling
+              </Button>
             </motion.div>
           </div>
         </section>
@@ -156,11 +161,9 @@ export default function Home() {
               <p className="text-lg text-muted-foreground mb-8">
                 A perfect game is 12 strikes for 300 points. Think you can figure out why? Let's find out!
               </p>
-              <Link href="/play">
-                <Button size="lg" variant="default" data-testid="button-start-bowling-bottom">
-                  Let's Bowl
-                </Button>
-              </Link>
+              <Button size="lg" variant="default" onClick={navigateToPlay} data-testid="button-start-bowling-bottom">
+                Let's Bowl
+              </Button>
             </motion.div>
           </div>
         </section>
