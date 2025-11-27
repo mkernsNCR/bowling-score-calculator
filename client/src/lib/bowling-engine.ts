@@ -134,6 +134,14 @@ export function addRollToFrame(gameState: GameState, frameIndex: number, pins: n
   
   newState.gameComplete = newState.frames[9].isComplete;
   
+  // Update currentFrame to point to the first incomplete frame
+  for (let i = 0; i < 10; i++) {
+    if (!newState.frames[i].isComplete) {
+      newState.currentFrame = i;
+      break;
+    }
+  }
+  
   calculateScores(newState);
   
   return newState;
