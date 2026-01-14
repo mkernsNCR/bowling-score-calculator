@@ -40,7 +40,7 @@ This bowling score calculator is designed as an educational tool that helps user
 
 ## Project Structure
 
-```
+```plaintext
 bowling-score-calculator/
 ├── client/                 # React frontend application
 │   ├── src/
@@ -110,7 +110,7 @@ SESSION_SECRET=your-secret-key
 ```
 
 For Neon database:
-1. Create a new Neon project at https://neon.tech
+1. Create a new Neon project at [Neon](https://neon.tech)
 2. Copy the connection string
 3. Add it to your `.env` file
 
@@ -201,7 +201,7 @@ The production build process:
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License - This project is open source under the MIT License.
 
 ## Support
 
