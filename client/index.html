@@ -25,6 +25,11 @@
         transition: opacity 0.5s ease-out;
       }
       
+      .bowling-ball-bounce {
+        margin-bottom: 20px;
+        animation: bounce 1s ease-in-out infinite;
+      }
+      
       .bowling-ball-spinner {
         width: 80px;
         height: 80px;
@@ -32,9 +37,8 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
-        animation: spin 2s linear infinite, bounce 1s ease-in-out infinite;
+        animation: spin 2s linear infinite;
         border-radius: 50%;
-        margin-bottom: 20px;
       }
       
       @keyframes spin {
@@ -43,8 +47,8 @@
       }
       
       @keyframes bounce {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-10px) rotate(180deg); }
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
       }
       
       .loading-text {
@@ -76,7 +80,9 @@
   </head>
   <body>
     <div id="loading-spinner">
-      <div class="bowling-ball-spinner"></div>
+      <div class="bowling-ball-bounce">
+        <div class="bowling-ball-spinner"></div>
+      </div>
       <div class="loading-text">Loading Bowling Score Tutor</div>
     </div>
     <div id="root"></div>
